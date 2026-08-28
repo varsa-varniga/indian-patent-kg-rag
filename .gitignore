@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment
+.env
+
+# Data
+data/raw/*
+data/processed/*
+data/samples/*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+# Virtual environment
+patent-rag-env/
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# Data files
+*.csv
+*.xlsx
+*.xls
+*.parquet
+
+# OS
+.DS_Store
+Thumbs.db

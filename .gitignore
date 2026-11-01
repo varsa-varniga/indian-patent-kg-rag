@@ -1,16 +1,36 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
 # Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+env/
+patent-rag-env/
 
-# Environment
-.env
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
 
-# Data
+# Patent datasets
 data/raw/*
 data/processed/*
 data/samples/*
+*.csv
+*.xlsx
+*.xls
+*.parquet
+
+# Generated embeddings and indexes
+*.npy
+*.index
+*.gpickle
 
 # Jupyter
 .ipynb_checkpoints/
@@ -22,27 +42,6 @@ data/samples/*
 # OS
 .DS_Store
 Thumbs.db
-# Virtual environment
-patent-rag-env/
-venv/
-.venv/
 
-# Python
-__pycache__/
-*.pyc
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Environment variables
-.env
-
-# Data files
-*.csv
-*.xlsx
-*.xls
-*.parquet
-
-# OS
-.DS_Store
-Thumbs.db
+# Logs
+*.log

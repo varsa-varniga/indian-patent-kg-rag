@@ -103,7 +103,11 @@ export default function LoginPage() {
     localStorage.setItem(
       USER_KEY,
       JSON.stringify({
-        name: normalizedEmail.split("@")[0].split(".")[0],
+        name: normalizedEmail
+  .split("@")[0]
+  .split(".")[0]
+  .replace(/[0-9]/g, "")
+  .replace(/[^a-zA-Z]/g, ""),
         email: normalizedEmail,
       })
     );

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useLocation,
   useNavigate,
@@ -28,6 +28,7 @@ import {
 const GREEN = "#07866F";
 const DARK = "#173B32";
 const LOGIN_KEY = "patentgraph_logged_in";
+const USER_KEY = "patentgraph_user";
 const SAVED_KEY = "patentgraph_saved";
 
 function getPatentId(patent) {
@@ -51,11 +52,7 @@ function savePendingPatent(patent) {
     const items = Array.isArray(saved) ? saved : [];
     const patentId = getPatentId(patent);
 
-    const alreadySaved = items.some(
-      (item) => getPatentId(item) === patentId
-    );
-
-    if (!alreadySaved) {
+    if (!items.some((item) => getPatentId(item) === patentId)) {
       localStorage.setItem(
         SAVED_KEY,
         JSON.stringify([...items, patent])
@@ -75,17 +72,43 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    if (localStorage.getItem(LOGIN_KEY) !== "true") return;
+
+    const pendingPatent = location.state?.pendingSavePatent;
+
+    if (pendingPatent) {
+      savePendingPatent(pendingPatent);
+      navigate("/workspace/saved", { replace: true });
+    } else {
+      navigate(location.state?.from || "/workspace", {
+        replace: true,
+      });
+    }
+  }, [navigate, location.state]);
+
   function handleLogin(event) {
     event.preventDefault();
     setError("");
 
-    if (!email.trim() || !password) {
+    const normalizedEmail = email.trim();
+
+    if (!normalizedEmail || !password) {
       setError("Please enter your email and password.");
       return;
     }
 
-    // Demo login only; this does not authenticate against a server.
+    // Demo login only; no server authentication.
     localStorage.setItem(LOGIN_KEY, "true");
+    localStorage.setItem(
+      USER_KEY,
+      JSON.stringify({
+        name: normalizedEmail.split("@")[0].split(".")[0],
+        email: normalizedEmail,
+      })
+    );
+
+    window.dispatchEvent(new Event("patentgraph-auth-change"));
 
     const pendingPatent = location.state?.pendingSavePatent;
 
@@ -143,9 +166,7 @@ export default function LoginPage() {
               PatentGraph
             </Typography>
 
-            <Typography
-              sx={{ color: "#687970", textAlign: "center" }}
-            >
+            <Typography sx={{ color: "#687970", textAlign: "center" }}>
               Connect ideas. Discover prior art.
             </Typography>
           </Stack>

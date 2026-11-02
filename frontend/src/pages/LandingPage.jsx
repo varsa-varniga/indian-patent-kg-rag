@@ -351,11 +351,19 @@ export default function LandingPage() {
     searchInputRef.current?.focus();
   }
 
-  function handleSignIn() {
-    navigate("/login", {
-      state: { from: "/workspace" },
-    });
+ function handleSignIn() {
+  const isLoggedIn =
+    localStorage.getItem("patentgraph_logged_in") === "true";
+
+  if (isLoggedIn) {
+    navigate("/workspace");
+    return;
   }
+
+  navigate("/login", {
+    state: { from: "/workspace" },
+  });
+}
 
   return (
     <Box sx={{ bgcolor: "#F5F9F7", color: "#173B32", overflowX: "clip", width: "100%", minHeight: "100dvh" }}>

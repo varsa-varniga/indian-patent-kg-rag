@@ -10,20 +10,28 @@ import {
 
 import { AccountTree } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+const LOGIN_KEY = "patentgraph_logged_in";
 
 export default function Navbar() {
-  function handleSearchClick() {
-    const searchInput = document.getElementById("patent-search-input");
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => localStorage.getItem(LOGIN_KEY) === "true"
+  );
 
-    if (!searchInput) return;
+  useEffect(() => {
+    function checkLoginStatus() {
+      setIsLoggedIn(localStorage.getItem(LOGIN_KEY) === "true");
+    }
 
-    searchInput.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
+    window.addEventListener("storage", checkLoginStatus);
+    window.addEventListener("patentgraph-auth-change", checkLoginStatus);
 
-    searchInput.focus({ preventScroll: true });
-  }
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+      window.removeEventListener("patentgraph-auth-change", checkLoginStatus);
+    };
+  }, []);
 
   return (
     <AppBar
@@ -43,9 +51,10 @@ export default function Navbar() {
           gap: 2,
         }}
       >
+        {/* Logo */}
         <Stack
           component={RouterLink}
-          to="/"
+          to={isLoggedIn ? "/workspace" : "/"}
           direction="row"
           spacing={1.2}
           alignItems="center"
@@ -90,50 +99,58 @@ export default function Navbar() {
           </Box>
         </Stack>
 
+        {/* Navigation */}
         <Stack
           direction="row"
           spacing={{ xs: 0.5, sm: 2 }}
           alignItems="center"
         >
-          <Button
-            onClick={handleSearchClick}
-            color="inherit"
-            sx={{
-              display: { xs: "none", sm: "inline-flex" },
-              textTransform: "none",
-              fontWeight: 700,
-            }}
-          >
-            Search
-          </Button>
+          {isLoggedIn ? (
+            <Button
+              component={RouterLink}
+              to="/workspace"
+              color="inherit"
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Workspace
+            </Button>
+          ) : (
+            <>
+              <Button
+                component={RouterLink}
+                to="/login"
+                color="inherit"
+                sx={{
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Sign in
+              </Button>
 
-          <Button
-            component={RouterLink}
-            to="/login"
-            color="inherit"
-            sx={{
-              textTransform: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Sign in
-          </Button>
-
-          <Button
-            component={RouterLink}
-            to="/login"
-            variant="contained"
-            sx={{
-              bgcolor: "#07866F",
-              color: "#FFFFFF",
-              whiteSpace: "nowrap",
-              textTransform: "none",
-              px: { xs: 1.25, sm: 2 },
-              "&:hover": { bgcolor: "#056653" },
-            }}
-          >
-            Get started
-          </Button>
+              <Button
+                component={RouterLink}
+                to="/login"
+                variant="contained"
+                sx={{
+                  bgcolor: "#07866F",
+                  color: "#FFFFFF",
+                  whiteSpace: "nowrap",
+                  textTransform: "none",
+                  px: { xs: 1.25, sm: 2 },
+                  "&:hover": {
+                    bgcolor: "#056653",
+                  },
+                }}
+              >
+                Get started
+              </Button>
+            </>
+          )}
         </Stack>
       </Toolbar>
     </AppBar>
